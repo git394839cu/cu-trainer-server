@@ -50,14 +50,23 @@ app.post('/api/generate', async (req, res) => {
       creatorName
     });
 
+    // 🔧 No temperature parameter (some models only allow default)
     const apiResp = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: { 'Authorization': `Bearer ${OPENAI_API_KEY}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model: OPENAI_MODEL, messages: [{ role: 'system', content: system }, { role: 'user', content: user }], temperature: 0.5 })
+      body: JSON.stringify({
+        model: OPENAI_MODEL,
+        messages: [
+          { role: 'system', content: system },
+          { role: 'user', content: user }
+        ]
+      })
     });
 
     const json = await apiResp.json();
-    if (!apiResp.ok) return res.status(apiResp.status).json({ error: json.error?.message || `LLM error ${apiResp.status}` });
+    if (!apiResp.ok) {
+      return res.status(apiResp.status).json({ error: json.error?.message || `LLM error ${apiResp.status}` });
+    }
 
     const draft = json.choices?.[0]?.message?.content?.trim() || "";
     res.json({ draft });
@@ -67,7 +76,7 @@ app.post('/api/generate', async (req, res) => {
   }
 });
 
-// Resync endpoint – you can trigger this in a browser (GET) or with a tool (POST)
+// Resync endpoint – trigger ingestion of Training/Approved Sent
 async function runResync(_req, res) {
   try {
     const { spawn } = await import('node:child_process');
