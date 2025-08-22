@@ -1,0 +1,18 @@
+{
+  "name": "zoho-ai-draft-server",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "start": "node server.js",
+    "resync": "node imapSync.js"
+  },
+  "dependencies": {
+    "better-sqlite3": "^9.4.0",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "imapflow": "^1.0.164",
+    "mailparser": "^3.7.1",
+    "node-fetch": "^3.3.2"
+  }
+}
